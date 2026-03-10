@@ -1,15 +1,20 @@
 'use client'
 
 import ExpenseForm from "@/components/expense/expense-form";
+import ExpenseList from "@/components/expense/expense-list";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button"
+import { Card, CardContent } from "@/components/ui/card";
 import useExpenses from "@/hooks/use-expenses";
-import { CreateExpensePayload } from "@/interfaces/interfaces";
+import { CreateExpensePayload, Expense } from "@/interfaces/interfaces";
 import { useState } from "react";
 import { toast } from "sonner";
 
 export default function Page() {
 
-  const { createExpense, expenses, loading, error } = useExpenses()
+  const { createExpense, expenses, loading, error, updateExpense, deleteExpense } = useExpenses()
+
+  // console.log(expenses)
 
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
   const [editingExpense, setEditingExpense] = useState<any | null>(null);
@@ -34,7 +39,27 @@ export default function Page() {
     }
   }
 
-  const handleUpdateExpense = {}
+  const handleUpdateExpense = async (payload: CreateExpensePayload) => {
+    if (!editingExpense) return
+    setFormError(null)
+
+    try {
+      await updateExpense(editingExpense.id, payload)
+      setIsDialogOpen(false)
+      toast.info('Gasto actualizado', {
+        description: 'Gasto actualizado correctamente'
+      })
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'No se ha podido actualizar el gasto'
+    }
+  }
+
+  const handleDeleteExpense = (expenseId: string) => { }
+
+  const handleOpenUpdateDialog = (expense: Expense) => {
+    setEditingExpense(expense)
+    setIsDialogOpen(true)
+  }
 
   const handleOpenDialog = () => {
     setEditingExpense(null)
@@ -62,8 +87,22 @@ export default function Page() {
         </div>
 
         {/* Error */}
+        {(error || formError) && (
+          <Alert variant='destructive'>
+            <AlertDescription>{error || formError}</AlertDescription>
+          </Alert>
+        )}
 
         {/* Loading  */}
+        {loading && (
+          <Card>
+            <CardContent className="pt-6">
+              <p className="text-center text-muted-foreground">
+                Cargando gastos...
+              </p>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Action Buttons */}
         <div className="flex gap-2">
@@ -74,8 +113,7 @@ export default function Page() {
           </Button>
           {/* DialogFormulario */}
           <ExpenseForm
-            // onSubmit={editingExpense ? handleUpdateExpense : handleCreateExpense}
-            onSubmit={handleCreateExpense}
+            onSubmit={editingExpense ? handleUpdateExpense : handleCreateExpense}
             isLoading={loading}
             initialData={editingExpense || undefined}
             title={editingExpense ? 'Actualizar Gasto' : 'Nuevo Gasto'}
@@ -86,6 +124,13 @@ export default function Page() {
         </div>
 
         {/* Lista Gastos */}
+        {!loading &&
+          <ExpenseList
+            expenses={expenses}
+            onUpdate={handleOpenUpdateDialog}
+            onDelete={handleDeleteExpense}
+          />
+        }
 
       </div>
 
