@@ -1,19 +1,49 @@
+'use client'
+
 import { Button } from "@/components/ui/button"
+import { useState } from "react";
 
 export default function Page() {
+
+  const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [editingExpense, setEditingExpense] = useState<any | null>(null);
+
+  const handleOpenDialog = () => {
+    setEditingExpense(null)
+    setIsDialogOpen(true)
+  }
+
   return (
-    <div className="flex min-h-svh p-6">
-      <div className="flex max-w-md min-w-0 flex-col gap-4 text-sm leading-loose">
-        <div>
-          <h1 className="font-medium">Project ready!</h1>
-          <p>You may now add components and start building.</p>
-          <p>We&apos;ve already added the button component for you.</p>
-          <Button className="mt-2">Button</Button>
+    <div className="min-h-screen bg-linear-to-br from-background to-muted p-6">
+      <div className="mx-auto max-w-2xl space-y-6">
+        {/* Header */}
+        <div className="space-y-2">
+          <h1 className="text-4xl font-bold">
+            Expense Tracker
+          </h1>
+          <p className="text-muted-foreground">
+            Registra y gestiona tus gastos
+          </p>
         </div>
-        <div className="font-mono text-xs text-muted-foreground">
-          (Press <kbd>d</kbd> to toggle dark mode)
+
+        {/* Error */}
+
+        {/* Loading  */}
+
+        {/* Action Buttons */}
+        <div className="flex gap-2">
+          <Button
+            onClick={handleOpenDialog}
+            variant='action_button'>
+            + Agregar Gasto
+          </Button>
+          {/* DialogFormulario */}
         </div>
+
+        {/* Lista Gastos */}
+
       </div>
+
     </div>
   )
 }
