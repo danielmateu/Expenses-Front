@@ -28,11 +28,10 @@ export default function Page() {
   // console.log(expenses)
 
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-  const [editingExpense, setEditingExpense] = useState<any | null>(null);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   const [expenseToDelete, setExpenseToDelete] = useState<Expense | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState<boolean>(false);
   const [formError, setFormError] = useState<string | null>(null);
-
 
   const handleCreateExpense = async (payload: CreateExpensePayload) => {
     setFormError(null)
